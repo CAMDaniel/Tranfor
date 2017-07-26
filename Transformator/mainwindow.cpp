@@ -12,8 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setNameFilter();
     setDirModel();
     setFileModel();
-    setDataFileModel();
-    //GenerateData(1000);
+//    setDataFileModel();
 }
 
 MainWindow::~MainWindow()
@@ -27,6 +26,9 @@ void MainWindow::setDirModel(void)
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     dirModel->setRootPath(sPath);
     ui->TV_fileSystem->setModel(dirModel);
+    ui->TV_fileSystem->hideColumn(1);
+    ui->TV_fileSystem->hideColumn(2);
+    ui->TV_fileSystem->hideColumn(3);
 }
 
 void MainWindow::setFileModel(void)
@@ -41,12 +43,12 @@ void MainWindow::setFileModel(void)
 
 void MainWindow::setDataFileModel(void)
 {
-    dataFileModel=new QFileSystemModel(this);
-    dataFileModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
-    dataFileModel->setRootPath(sPath);
-    dataFileModel->setNameFilters(nameFilter);
-    dataFileModel->setNameFilterDisables(false);
-    ui->TV_dataFiles->setModel(dataFileModel);
+//    dataFileModel=new QFileSystemModel(this);
+//    dataFileModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
+//    dataFileModel->setRootPath(sPath);
+//    dataFileModel->setNameFilters(nameFilter);
+//    dataFileModel->setNameFilterDisables(false);
+//    ui->TV_dataFiles->setModel(dataFileModel);
 }
 
 void MainWindow::setNameFilter(void)
@@ -63,7 +65,7 @@ void MainWindow::on_TV_fileSystem_clicked(const QModelIndex &index)
 {
    QString sPath=dirModel->fileInfo(index).absoluteFilePath();
    ui->LV_showFiles->setRootIndex(fileModel->setRootPath(sPath));
-   ui->TV_dataFiles->setRootIndex(dataFileModel->setRootPath(sPath));
+//   ui->TV_dataFiles->setRootIndex(dataFileModel->setRootPath(sPath));
 }
 
 void MainWindow::openFile(QString path)

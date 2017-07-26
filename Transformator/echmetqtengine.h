@@ -5,7 +5,6 @@
 #include <QtScript/QScriptValue>
 #include <cmath>
 #include <QString>
-#include "echmetqtenginelib.h"
 
 typedef struct QScriptValue QVal;
 typedef struct QScriptContext QCon;
