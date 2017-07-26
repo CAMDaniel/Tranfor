@@ -1,12 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "transformator.h"
 #include <QMainWindow>
 #include <QtPrintSupport/QPrinter>
 #include <QFileSystemModel>
 #include <QtGui>
 #include <QDialog>
+#include "transformator.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,9 +21,22 @@ public:
     ~MainWindow();
 
 private slots:
-    void makePlot(void);
     void on_TV_fileSystem_clicked(const QModelIndex &index);
     void on_LV_showFiles_clicked(const QModelIndex &index);
+    void on_BT_changeData_clicked();
+
+    void on_BT_changeData_2_clicked();
+
+private:
+    void openFile(QString path);
+    void setNameFilter();
+    void setRoot(QString Path);
+    void setDirModel();
+    void setFileModel();
+    void setDataFileModel();
+    void saveFileAs(QString path);
+    void drawGraphOrigin(QVector<double> data_x, QVector<double> data_y);
+    void drawGraphNew(QVector<double> data_x, QVector<double> data_y);
 
 private:
     Ui::MainWindow *ui;
@@ -33,17 +46,8 @@ private:
     QStringList nameFilter;
     QString sPath;
     QString filePath;
-    QVector<double> data_x, data_y, data_z;
-    void setNameFilter();
-    void setRoot(QString Path);
-    void setDirModel();
-    void setFileModel();
-    void setDataFileModel();
-    void GenerateData(int sizeVec);
-    void setGraphNew();
-    void setGraphOrigin();
-    void loadDataFromFile();
-    void convertDataFromFile(QString Path);
+    QString func;
+    Transformator mData;
 };
 
 #endif // MAINWINDOW_H

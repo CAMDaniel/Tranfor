@@ -1,12 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#define SET_ROOT_PATH   "/"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setRoot("/");
+    setRoot(SET_ROOT_PATH);
     setNameFilter();
     setDirModel();
     setFileModel();
@@ -25,38 +27,6 @@ void MainWindow::setDirModel(void)
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     dirModel->setRootPath(sPath);
     ui->TV_fileSystem->setModel(dirModel);
-}
-
-void MainWindow::loadDataFromFile(void)
-{
-    QFile file(filePath);
-    if(!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0, "error", file.errorString());
-    }
-
-    QTextStream in(&file);
-    QStringList list;
-    QStringList model;
-    while(!in.atEnd()) {
-        QString line = in.readLine();
-        list = line.split(";");
-        model.append(list[0]);
-        model.append(list[1]);
-    }
-
-    int data_len=model.size()/2;
-//    QString tmp=QString::number(data_len);
-//    ui->TE_function->setText(tmp);
-    data_x.resize(data_len);
-    data_y.resize(data_len);
-    data_z.resize(data_len);
-
-    for(int i=0; i<model.size(); i+=2) {
-        data_x[i/2]=model[i].toDouble();
-        data_y[i/2]=model[i+1].toDouble();
-    }
-
-    file.close();
 }
 
 void MainWindow::setFileModel(void)
@@ -96,56 +66,35 @@ void MainWindow::on_TV_fileSystem_clicked(const QModelIndex &index)
    ui->TV_dataFiles->setRootIndex(dataFileModel->setRootPath(sPath));
 }
 
-void MainWindow::on_LV_showFiles_clicked(const QModelIndex &index)
+void MainWindow::openFile(QString path)
 {
-   QString Path=dirModel->fileInfo(index).absoluteFilePath();
-   QFile file(Path);
-   this->filePath=Path;
+   QFile file(path);
+   this->filePath=path;
    if(!file.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "info", file.errorString());
    QTextStream in(&file);
-   ui->TE_OriginFile->setText(Path);
+   ui->TE_OriginFile->setText(path);
    ui->TB_OriginData->setText(in.readAll());
    file.close();
-
-   loadDataFromFile();
-   convertDataFromFile(Path);
-   MainWindow::makePlot();
 }
 
-void MainWindow::convertDataFromFile(QString Path)
+void MainWindow::on_LV_showFiles_clicked(const QModelIndex &index)
 {
-    //TODO
-    QString fileName="/home/daniel/ahoj.txt";
-    QFile file(fileName);
-    if (file.open(QIODevice::ReadWrite))
-    {
-        QTextStream in(&file);
-        in << "something" << endl;
+   ui->TB_NewData->clear();
+   QString path=dirModel->fileInfo(index).absoluteFilePath();
+   openFile(path);
 
-        for (int i=0; i<data_x.size(); i++) {
-            QString x=QString::number(data_x[i]);
-            QString z=QString::number(data_z[i]);
-            in<<x<<";"<<z<<endl;
-        }
-        ui->TB_NewData->setText(in.readAll());
-        file.close();
-    }
+   mData.setPath(path);
+   drawGraphOrigin(mData.vector_x(), mData.vector_y());
+   drawGraphNew(mData.vector_x(), mData.vector_y());
 }
 
-void MainWindow::GenerateData(int sizeVec)
+void MainWindow::saveFileAs(QString path)
 {
-    data_x.resize(sizeVec);
-    data_y.resize(sizeVec);
-    data_z.resize(sizeVec);
-    for (int i=0; i<sizeVec; ++i) {
-        this->data_x[i]=i/50.0-1;
-        this->data_y[i]=data_x[i]*data_x[i];
-        this->data_z[i]=sin(data_x[i]);
-    }
+    mData.saveFileAs(path);
 }
 
-void MainWindow::setGraphOrigin(void)
+void MainWindow::drawGraphOrigin(QVector<double> data_x, QVector<double> data_y)
 {
     ui->plotGraphOrigin->addGraph();
     ui->plotGraphOrigin->graph(0)->setData(data_x, data_y);
@@ -158,10 +107,11 @@ void MainWindow::setGraphOrigin(void)
     ui->plotGraphOrigin->replot();
 }
 
-void MainWindow::setGraphNew(void)
+void MainWindow::drawGraphNew(QVector<double> data_x, QVector<double> data_y)
 {
     ui->plotGraphNew->addGraph();
-    ui->plotGraphNew->graph(0)->setData(data_x, data_z);
+    ui->plotGraphNew->graph(0)->setPen(QPen(Qt::red));
+    ui->plotGraphNew->graph(0)->setData(data_x, data_y);
 
     ui->plotGraphNew->xAxis->setLabel("x");
     ui->plotGraphNew->yAxis->setLabel("y");
@@ -171,8 +121,28 @@ void MainWindow::setGraphNew(void)
     ui->plotGraphNew->replot();
 }
 
-void MainWindow::makePlot(void)
+void MainWindow::on_BT_changeData_clicked()
 {
-    setGraphOrigin();
-    setGraphNew();
+   this->func=ui->TE_function->toPlainText();
+   mData.transform(func);
+   drawGraphNew(mData.vector_x(), mData.vector_y());
+}
+
+void MainWindow::on_BT_changeData_2_clicked()
+{
+    QString name=ui->TE_newFile->toPlainText();
+    if(name!="") {
+        QString fileName=sPath;
+        fileName.append("home/daniel/");
+        fileName.append(name);
+        fileName.append(".txt");
+        saveFileAs(fileName);
+
+        QFile file(fileName);
+        if(!file.open(QIODevice::ReadOnly))
+            QMessageBox::information(0, "info", file.errorString());
+        QTextStream in(&file);
+        ui->TB_NewData->setText(in.readAll());
+        file.close();
+    }
 }
