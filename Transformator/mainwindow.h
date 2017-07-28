@@ -43,6 +43,7 @@ private:
     QFileSystemModel *dirModel;
     QFileSystemModel *fileModel;
     QFileSystemModel *dataFileModel;
+    QString mFilePath;
     QStringList nameFilter;
     QString sPath;
     QString filePath;

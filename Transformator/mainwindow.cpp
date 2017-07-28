@@ -63,8 +63,9 @@ void MainWindow::setRoot(QString Path)
 
 void MainWindow::on_TV_fileSystem_clicked(const QModelIndex &index)
 {
-   QString sPath=dirModel->fileInfo(index).absoluteFilePath();
-   ui->LV_showFiles->setRootIndex(fileModel->setRootPath(sPath));
+   mFilePath=dirModel->fileInfo(index).absoluteFilePath();
+   ui->LV_showFiles->setRootIndex(fileModel->setRootPath(mFilePath));
+   ui->TE_OriginFile->setText(mFilePath);
 //   ui->TV_dataFiles->setRootIndex(dataFileModel->setRootPath(sPath));
 }
 
@@ -75,7 +76,7 @@ void MainWindow::openFile(QString path)
    if(!file.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "info", file.errorString());
    QTextStream in(&file);
-   ui->TE_OriginFile->setText(path);
+//   ui->TE_OriginFile->setText(path);
    ui->TB_OriginData->setText(in.readAll());
    file.close();
 }
@@ -135,9 +136,10 @@ void MainWindow::on_BT_changeData_2_clicked()
     QString name=ui->TE_newFile->toPlainText();
     if(name!="") {
         QString fileName=sPath;
-        fileName.append("home/daniel/");
+        fileName.append(mFilePath);
+        fileName.append("/");
         fileName.append(name);
-        fileName.append(".txt");
+//        fileName.append(".txt");
         saveFileAs(fileName);
 
         QFile file(fileName);
