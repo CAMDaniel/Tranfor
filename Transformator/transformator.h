@@ -5,6 +5,8 @@
 #include <QString>
 #include <QVector>
 #include <QFile>
+#include <vector>
+#include <iterator>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QMainWindow>
@@ -37,6 +39,7 @@ private:
     void loadData(void);
     void initData();
     double countDataY(QString func, double x);
+    double stringToDouble(std::string str);
 
 private:
     double  *           mData_x;

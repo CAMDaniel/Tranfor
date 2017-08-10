@@ -21,9 +21,6 @@ Transformator::Transformator(double *data_x, double * data_y, size_t size)
 }
 
 
-
-///*  1    */    QScriptValue QCos        (QScriptContext * cxt, QScriptEngine *) {   return cos(cxt->argument(0).toNumber()); }
-
 double Transformator::countDataY(QString func, double x)
 {
 //    QScriptEngine eng;
@@ -122,6 +119,34 @@ void Transformator::initData(void)
     mData_y=new double [mSize];
 }
 
+//void Transformator::loadData()
+//{
+//    QFile file(mPath);
+//    if(!file.open(QIODevice::ReadOnly)) {
+//        QMessageBox::information(0, "error", file.errorString());
+//    }
+
+//    QTextStream in(&file);
+//    QStringList list;
+//    QStringList model;
+//    while(!in.atEnd()) {
+//        QString line = in.readLine();
+//        list = line.split(";");
+//        for (int i=0; i<list.size(); ++i)
+//            model.append(list[i]);
+//    }
+
+//    mSize=model.size()/2;
+//    initData();
+
+//    for(int i=0; i<model.size(); i+=2) {
+//        mData_x[i/2]=model[i].toDouble();
+//        mData_y[i/2]=model[i+1].toDouble();
+//    }
+//    file.close();
+//}
+
+
 void Transformator::loadData()
 {
     QFile file(mPath);
@@ -131,20 +156,36 @@ void Transformator::loadData()
 
     QTextStream in(&file);
     QStringList list;
-    QStringList model;
+
+    std::vector<std::string> data_x;
+    std::vector<std::string> data_y;
     while(!in.atEnd()) {
         QString line = in.readLine();
         list = line.split(";");
-        for (int i=0; i<list.size(); ++i)
-            model.append(list[i]);
+        for (int i=0; i<list.size(); ++i) {
+            line=list[i];
+            data_x.push_back(line.toStdString());
+            line=list[++i];
+            data_y.push_back(line.toStdString());
+        }
     }
 
-    mSize=model.size()/2;
+    if(data_x.size()!=data_y.size())
+        QMessageBox::information(0, "The file has not correct data, "
+                                    "number of x data is not equal y data.", file.errorString());
+    mSize=data_x.size();
     initData();
+    size_t idx=-1;
+    for (auto const &it:data_x)
+        mData_x[++idx]=stringToDouble(it);
+    idx=-1;
+    for (auto const &it:data_y)
+        mData_y[++idx]=stringToDouble(it);
 
-    for(int i=0; i<model.size(); i+=2) {
-        mData_x[i/2]=model[i].toDouble();
-        mData_y[i/2]=model[i+1].toDouble();
-    }
     file.close();
+}
+
+double Transformator::stringToDouble(std::string str)
+{
+    return ::atof(str.c_str());
 }

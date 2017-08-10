@@ -58,9 +58,6 @@
      <item>
       <widget class="QListView" name="LV_showFiles"/>
      </item>
-     <item>
-      <widget class="QTreeView" name="TV_dataFiles"/>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
