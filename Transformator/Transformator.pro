@@ -18,11 +18,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
     transformator.cpp \
-    echmetqtengine.cpp
+    echmetqtengine.cpp \
+    ascloader.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
     transformator.h \
-    echmetqtengine.h
+    echmetqtengine.h \
+    ascloader.h
 
 FORMS    += mainwindow.ui

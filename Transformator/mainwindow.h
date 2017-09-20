@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ascloader.h"
 #include <QMainWindow>
 #include <QtPrintSupport/QPrinter>
 #include <QFileSystemModel>
@@ -48,6 +49,7 @@ private:
     QString sPath;
     QString filePath;
     QString func;
+    ASCLoader mLoader;
     Transformator mData;
 };
 

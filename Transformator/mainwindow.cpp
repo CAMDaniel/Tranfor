@@ -53,7 +53,7 @@ void MainWindow::setDataFileModel(void)
 
 void MainWindow::setNameFilter(void)
 {
-    this->nameFilter<<"*.txt";
+    this->nameFilter<<"*.txt"<<"*.asc";
 }
 
 void MainWindow::setRoot(QString Path)
@@ -86,6 +86,13 @@ void MainWindow::on_LV_showFiles_clicked(const QModelIndex &index)
    ui->TB_NewData->clear();
    QString path=dirModel->fileInfo(index).absoluteFilePath();
    openFile(path);
+
+   //--------------------------------------------------------
+//   mLoader.setPath(path);
+
+//   drawGraphOrigin(mLoader.getVector_x, mLoader.getVector_y);
+   //--------------------------------------------------------
+
 
    mData.setPath(path);
    drawGraphOrigin(mData.vector_x(), mData.vector_y());
